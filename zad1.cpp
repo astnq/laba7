@@ -1,56 +1,38 @@
 #include <iostream>
-#include <vector>
+#include <stack>
+#include <string>
+using namespace std;
 
-    using namespace std;
-
-    bool canFit(vector<int>&containers, vector<int>&items, int containerIndex) {
-        if (containerIndex == containers.size()) {
-            return true; // Все контейнеры обработаны успешно
-        }
-
-        for (int i = 0; i < items.size(); ++i) {
-            if (items[i] <= containers[containerIndex]) {
-                int itemHeight = items[i];
-                containers[containerIndex] -= itemHeight;
-                if (canFit(containers, items, containerIndex + 1)) {
-                    return true;
-                }
-                containers[containerIndex] += itemHeight; // Откат изменений
-            }
-        }
-
-        return false;
+bool Skobki(const string& str, int pos = 0, int opened = 0) {
+    if (pos == str.size()) {
+        return opened == 0;  // Проверяем, что все скобки были закрыты
     }
 
-    int main() {
-        setlocale(LC_ALL, "Rus");
-        int N;
-        cout << "Введите количество контейнеров: ";
-        cin >> N;
-
-        vector<int> containers(N);
-        cout << "Введите высоту каждого контейнера:\n";
-        for (int i = 0; i < N; ++i) {
-            cin >> containers[i];
+    if (str[pos] == '(') {
+        return Skobki(str, pos + 1, opened + 1);
+    } else if (str[pos] == ')') {
+        if (opened > 0) {
+            return Skobki(str, pos + 1, opened - 1);
+        } else {
+            return false;  // Найдена лишняя закрывающая скобка
         }
-
-        int M;
-        cout << "Введите количество предметов: ";
-        cin >> M;
-
-        vector<int> items(M);
-        cout << "Введите высоту каждого предмета:\n";
-        for (int i = 0; i < M; ++i) {
-            cin >> items[i];
-        }
-
-        if (canFit(containers, items, 0)) {
-            cout << "Предметы можно разместить в контейнерах так\n";
-        }
-        else {
-            cout << "Невозможно разместить предметы в контейнерах без выступа груза\n";
-        }
-
-        return 0;
+    } else {
+        return Skobki(str, pos + 1, opened);  // Пропускаем символы, отличные от скобок
     }
-    
+}
+
+int main() {
+    setlocale (LC_ALL, "rus");
+    system ("chcp 65001");
+    string input;
+    cout << "Введите строку со скобками: ";
+    cin >> input;
+
+    if (Skobki(input)) {
+        cout << "Скобки расставлены правильно." << endl;
+    } else {
+        cout << "Скобки расставлены неправильно." << endl;
+    }
+
+    return 0;
+}

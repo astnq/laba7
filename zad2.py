@@ -1,28 +1,23 @@
-def decode_string(s, i):
-    res = ""
-    
-    while i[0] < len(s) and s[i[0]] != ']':
-        if not s[i[0]].isdigit():
-            res += s[i[0]]
-            i[0] += 1
+def decodeString(s: str) -> str:
+    stack = []
+    curr_num = 0
+    curr_str = ''
+
+    for char in s:
+        if char.isdigit():
+            curr_num = curr_num * 10 + int(char)
+        elif char == '[':
+            stack.append((curr_str, curr_num))
+            curr_str, curr_num = '', 0
+        elif char == ']':
+            prev_str, num = stack.pop()
+            curr_str = prev_str + curr_str * num
         else:
-            k = 0
-            while i[0] < len(s) and s[i[0]].isdigit():
-                k = k * 10 + int(s[i[0]])
-                i[0] += 1
-            
-            i[0] += 1  # Пропускаем '['
-            decoded_str = decode_string(s, i)
-            i[0] += 1  # Пропускаем ']'
-            
-            res += decoded_str * k
+            curr_str += char
 
-    return res
+    return curr_str
 
-def decode_string_main(s):
-    i = [0]
-    return decode_string(s, i)
-
-if __name__ == "__main__":
-    s = input("Введите: ")
-    print("Вывод:", decode_string_main(s))
+# Примеры
+print(decodeString("3[a]2[bc]"))
+print(decodeString("3[a2[c]]"))
+print(decodeString("2[abc]3[cd]ef"))

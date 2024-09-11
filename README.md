@@ -1,2 +1,2 @@
 # laba7
-qwe
+19var

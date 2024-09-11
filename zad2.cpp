@@ -2,45 +2,48 @@
 #include <string>
 using namespace std;
 
-string decodeString(const string& s, size_t& i) {
-    string res = "";
+// Рекурсивная функция для декодирования закодированной строки
+string decodeString(const string& s, size_t& idx) {
+    string result = "";
+    int count = 0;
 
-    while (i < s.length() && s[i] != ']') {
-        if (!isdigit(s[i])) {
-            res += s[i];
-            i++;
-        }
-        else {
-            int k = 0;
-            while (i < s.length() && isdigit(s[i])) {
-                k = k * 10 + (s[i] - '0');
-                i++;
+    while (idx < s.size()) {
+        if (isdigit(s[idx])) {
+            count = count * 10 + s[idx] - '0';
+        } else if (s[idx] == '[') {
+            // Рекурсивный вызов для декодирования подстроки внутри квадратных скобок
+            string decodedString = decodeString(s, ++idx);
+            // Добавляем к результату количество раз декодированной подстроки
+            for (int i = 0; i < count; ++i) {
+                result += decodedString;
             }
-
-            i++; // Пропускаем '['
-            string decodedStr = decodeString(s, i);
-            i++; // Пропускаем ']'
-
-            for (int j = 0; j < k; j++) {
-                res += decodedStr;
-            }
+            count = 0;
+        } else if (s[idx] == ']') {
+            return result; // Возвращаем результат, когда встречается ']'
+        } else {
+            result += s[idx]; // Добавляем символы к результату
         }
+        ++idx;
     }
 
-    return res;
+    return result; // Возвращаем окончательную декодированную строку
 }
 
+// Функция для декодирования закодированной строки посредством вызова вспомогательной функции
 string decodeString(const string& s) {
-    size_t i = 0;
-    return decodeString(s, i);
+    size_t idx = 0;
+    return decodeString(s, idx);
 }
 
 int main() {
-    setlocale(LC_ALL, "Rus");
-    cout << "Введите: " << endl;
-    string s;
-    cin >> s;
-    cout << "Вывод: " << decodeString(s) << endl;
+    system ("chcp 65001");
+    setlocale (LC_ALL, "rus");
+    string encodedString; // Закодированная строка для декодирования
+    cout << "Encode string: " << encodedString;
+    cin >> encodedString; // Ввод строки
+    string decodedString = decodeString(encodedString); // Декодируем строку
+    
+    cout << "Decode string: " << decodedString << endl;
 
     return 0;
 }
